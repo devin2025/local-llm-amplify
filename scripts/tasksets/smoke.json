@@ -1,0 +1,19 @@
+{
+  "name": "smoke",
+  "validator": "mixed",
+  "_comment": "冒烟题集：2 道题，用来快速确认端点能连上、脚本能跑通。第一次用这个 skill 时先跑它。注意 validator 是 mixed —— bench.py 目前按题集整体取一个校验器，所以 smoke 请用单题方式跑，见 README。",
+  "tasks": [
+    {
+      "id": "s1_math",
+      "prompt": "一件商品先涨价 20%，再降价 20%，最终价格是原价的百分之多少？只输出数字。最后一行用 \\boxed{答案}。",
+      "answer": "96",
+      "validator": "boxed_number"
+    },
+    {
+      "id": "s2_code",
+      "prompt": "实现函数 is_valid_brackets(s)，判断字符串中的括号是否正确匹配，只考虑 () [] {} 三种。空字符串视为合法。",
+      "validator": "py_exec",
+      "tests": "assert is_valid_brackets('()')\nassert not is_valid_brackets('([)]')\nassert is_valid_brackets('')\nassert not is_valid_brackets('(((')"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "code_py_basic",
+  "validator": "py_exec",
+  "extract": "code",
+  "system": "你是资深 Python 工程师。只输出代码，用 ``` 包裹，不要解释。代码必须能直接运行，不依赖任何第三方库。",
+  "_comment": "校验方式为把生成代码 + tests 拼在一起执行。断言写得比较宽松（用 in / set / len），避免因为顺序或返回类型差异误判。",
+  "tasks": [
+    {
+      "id": "c1",
+      "prompt": "实现函数 merge_intervals(intervals)，接收形如 [[1,3],[2,6]] 的区间列表，合并所有重叠区间并按起点升序返回。端点相接也算重叠，例如 [1,4] 和 [4,5] 合并为 [1,5]。",
+      "tests": "assert merge_intervals([[1,3],[2,6],[8,10],[15,18]]) == [[1,6],[8,10],[15,18]]\nassert merge_intervals([[1,4],[4,5]]) == [[1,5]]\nassert merge_intervals([]) == []\nassert merge_intervals([[1,2]]) == [[1,2]]\nassert merge_intervals([[2,3],[1,5],[4,7]]) == [[1,7]]"
+    },
+    {
+      "id": "c2",
+      "prompt": "实现函数 flatten_dict(d, sep='.', prefix='')，把嵌套字典展平成一层。例如 {'a':1,'b':{'c':2}} 展平为 {'a':1,'b.c':2}。空字典返回空字典。",
+      "tests": "assert flatten_dict({'a':1,'b':{'c':2,'d':{'e':3}}}) == {'a':1,'b.c':2,'b.d.e':3}\nassert flatten_dict({}) == {}\nassert flatten_dict({'x':{'y':{'z':0}}}, sep='/') == {'x/y/z':0}\nassert flatten_dict({'a':{'b':1},'c':2}) == {'a.b':1,'c':2}"
+    },
+    {
+      "id": "c3",
+      "prompt": "实现函数 is_valid_brackets(s)，判断字符串中的括号是否正确匹配，只考虑 () [] {} 三种。空字符串视为合法。其他字符忽略。",
+      "tests": "assert is_valid_brackets('()')\nassert is_valid_brackets('([{}])')\nassert is_valid_brackets('')\nassert is_valid_brackets('a(b)c')\nassert not is_valid_brackets('([)]')\nassert not is_valid_brackets('(((')\nassert not is_valid_brackets(']')"
+    },
+    {
+      "id": "c4",
+      "prompt": "实现函数 top_k_frequent(nums, k)，返回整数列表中出现频率最高的 k 个元素，顺序不限。",
+      "tests": "assert set(top_k_frequent([1,1,1,2,2,3], 2)) == {1,2}\nassert list(top_k_frequent([1], 1)) == [1]\nassert len(top_k_frequent([4,1,-1,2,-1,2,3], 2)) == 2\nassert set(top_k_frequent([5,5,5,5], 1)) == {5}"
+    },
+    {
+      "id": "c5",
+      "prompt": "实现函数 longest_common_prefix(strs)，返回字符串数组的最长公共前缀。没有公共前缀时返回空字符串。空数组返回空字符串。",
+      "tests": "assert longest_common_prefix(['flower','flow','flight']) == 'fl'\nassert longest_common_prefix(['dog','racecar','car']) == ''\nassert longest_common_prefix([]) == ''\nassert longest_common_prefix(['same']) == 'same'\nassert longest_common_prefix(['ab','a']) == 'a'"
+    }
+  ]
+}

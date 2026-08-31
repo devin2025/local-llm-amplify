@@ -1,0 +1,153 @@
+{
+  "_comment": "参数档位预设。针对 Qwen 系列（Qwen3 / Qwen2.5-Coder / QwQ）调优，其他模型族需按 references/sampling-params.md 微调。",
+
+  "profiles": {
+    "code_generate": {
+      "_label": "代码生成",
+      "temperature": 0.25,
+      "top_p": 0.90,
+      "top_k": 40,
+      "min_p": 0.02,
+      "repeat_penalty": 1.05,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "max_tokens": 3072,
+      "_why": "代码是低熵任务，高温只会引入语法噪声。min_p 0.02 砍掉长尾 token 是本地小模型最有效的一道保险。",
+      "_avoid": "repeat_penalty 超过 1.15 会让模型不敢复用变量名，生成出诡异的标识符。"
+    },
+
+    "code_debug": {
+      "_label": "改 bug / 读代码",
+      "temperature": 0.12,
+      "top_p": 0.85,
+      "top_k": 20,
+      "min_p": 0.02,
+      "repeat_penalty": 1.03,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "max_tokens": 3072,
+      "_why": "定位 bug 是检索 + 匹配任务，要的是确定性，不是创造力。"
+    },
+
+    "math_logic": {
+      "_label": "数学 / 逻辑推理（单次求解）",
+      "temperature": 0.30,
+      "top_p": 0.90,
+      "top_k": 30,
+      "min_p": 0.03,
+      "repeat_penalty": 1.00,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "max_tokens": 4096,
+      "_why": "推理需要一点探索空间，但 repeat_penalty 必须为 1.0 —— 惩罚复用会打断数学符号和变量名的正常重复。",
+      "_avoid": "这是本地模型翻车重灾区：默认 repeat_penalty 1.1 会显著拉低数学正确率。"
+    },
+
+    "math_logic_vote": {
+      "_label": "数学 / 逻辑（自洽投票采样用）",
+      "temperature": 0.85,
+      "top_p": 0.95,
+      "top_k": 50,
+      "min_p": 0.02,
+      "repeat_penalty": 1.00,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "max_tokens": 4096,
+      "_why": "投票的前提是候选要有多样性。高温 + 高 top_k 制造差异，靠多数投票收敛。别用低温采样做投票，那等于同一个答案抄 N 遍。"
+    },
+
+    "creative_writing": {
+      "_label": "创意写作 / 长文",
+      "temperature": 0.85,
+      "top_p": 0.92,
+      "top_k": 45,
+      "min_p": 0.05,
+      "repeat_penalty": 1.08,
+      "presence_penalty": 0.30,
+      "frequency_penalty": 0.20,
+      "max_tokens": 6144,
+      "_why": "中文长文最容易掉进套话循环。presence_penalty 0.3 逼模型开新话题，frequency_penalty 0.2 压制已经用滥的词。两个都要，只开一个效果差一半。",
+      "_avoid": "two penalty 加起来超过 1.0 会让中文变得不通顺。"
+    },
+
+    "video_script_story": {
+      "_label": "故事 / 情绪类视频脚本",
+      "temperature": 0.92,
+      "top_p": 0.93,
+      "top_k": 50,
+      "min_p": 0.05,
+      "repeat_penalty": 1.12,
+      "presence_penalty": 0.40,
+      "frequency_penalty": 0.30,
+      "max_tokens": 6144,
+      "_why": "叙事文本对重复最敏感 —— 一个比喻出现两次，整段就废了。这套参数是四个场景里最激进的，牺牲连贯性换意象密度。",
+      "_avoid": "用这套参数写代码或数学 = 灾难。场景路由必须走对。"
+    },
+
+    "translation": {
+      "_label": "翻译",
+      "temperature": 0.35,
+      "top_p": 0.85,
+      "top_k": 25,
+      "min_p": 0.03,
+      "repeat_penalty": 1.05,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.10,
+      "max_tokens": 4096,
+      "_why": "翻译要忠实 > 华丽。低温保准确，轻微 frequency_penalty 避免同一句式反复。"
+    },
+
+    "summarize": {
+      "_label": "总结 / 提炼",
+      "temperature": 0.20,
+      "top_p": 0.80,
+      "top_k": 20,
+      "min_p": 0.05,
+      "repeat_penalty": 1.05,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.10,
+      "max_tokens": 2048,
+      "_why": "摘要本质是压缩，不需要探索。min_p 0.05 砍得更狠，逼模型只说高置信内容。"
+    },
+
+    "thinking_model": {
+      "_label": "推理模型专用（QwQ / DeepSeek-R1 蒸馏 / Qwen3 思考模式）",
+      "temperature": 0.60,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.00,
+      "repeat_penalty": 1.00,
+      "presence_penalty": 0.00,
+      "frequency_penalty": 0.00,
+      "max_tokens": 16384,
+      "_why": "推理模型自带长思维链。官方推荐 temp 0.6 / top_p 0.95 / top_k 20 / min_p 0。低温会让它们陷入循环，高温会思维发散。别自作聪明改。",
+      "_avoid": "绝对不要对推理模型套 CoT 模板（「让我们一步步思考」），会造成双重思考、输出爆炸甚至死循环。"
+    },
+
+    "chat": {
+      "_label": "日常对话",
+      "temperature": 0.70,
+      "top_p": 0.80,
+      "top_k": 20,
+      "min_p": 0.00,
+      "repeat_penalty": 1.05,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "max_tokens": 2048,
+      "_why": "Qwen 官方非思考模式推荐值。"
+    },
+
+    "judge": {
+      "_label": "裁判 / 打分 / 自检",
+      "temperature": 0.10,
+      "top_p": 0.70,
+      "top_k": 10,
+      "min_p": 0.02,
+      "repeat_penalty": 1.02,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "max_tokens": 1536,
+      "_why": "裁判必须稳定可复现，否则投票/自评失去意义。用最低温 + 结构化输出。"
+    }
+  }
+}

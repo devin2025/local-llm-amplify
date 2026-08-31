@@ -1,0 +1,61 @@
+{
+  "_comment": "首次使用必改：base_url 的端口、model 名。用 python llm.py --list-models 查模型名。",
+
+  "active_endpoint": "llama_cpp",
+
+  "endpoints": {
+    "llama_cpp": {
+      "base_url": "http://127.0.0.1:8080/v1",
+      "api_key": "local",
+      "model": "qwen3-30b-a3b",
+      "_notes": "llama-server 默认端口 8080。推荐放通用/推理/写作模型，如 Qwen3-30B-A3B-Q4_K_M",
+      "capabilities": [
+        "temperature", "top_p", "top_k", "min_p", "typical_p",
+        "repeat_penalty", "presence_penalty", "frequency_penalty",
+        "dry_penalty", "mirostat", "mirostat_tau", "mirostat_eta",
+        "max_tokens", "seed", "stop", "n"
+      ]
+    },
+
+    "llama_cpp_alt": {
+      "base_url": "http://127.0.0.1:8081/v1",
+      "api_key": "local",
+      "model": "qwen2.5-coder-14b",
+      "_notes": "第二个实例。24G 卡建议跑代码专用模型（Qwen2.5-Coder-14B Q6_K）。代码任务比通用模型强一截。",
+      "capabilities": [
+        "temperature", "top_p", "top_k", "min_p", "typical_p",
+        "repeat_penalty", "presence_penalty", "frequency_penalty",
+        "dry_penalty", "mirostat", "mirostat_tau", "mirostat_eta",
+        "max_tokens", "seed", "stop", "n"
+      ]
+    },
+
+    "lm_studio": {
+      "base_url": "http://127.0.0.1:1234/v1",
+      "api_key": "lm-studio",
+      "model": "qwen3-30b-a3b",
+      "_notes": "LM Studio 需在 Local Server 面板开启服务。参数可控性弱：min_p / dry_penalty 不支持，top_k / repeat_penalty 可能被忽略。要榨性能请用 llama.cpp。",
+      "capabilities": [
+        "temperature", "top_p", "top_k",
+        "presence_penalty", "frequency_penalty",
+        "max_tokens", "seed", "stop", "n"
+      ]
+    }
+  },
+
+  "defaults": {
+    "timeout": 600,
+    "retries": 2,
+    "retry_backoff_sec": 2,
+    "_max_concurrency_note": "本地单卡 2-4 就够。设更高只是排队，不会更快。多卡或 -np 开大时可以往上调。",
+    "max_concurrency": 4,
+    "_results_note": "bench.py 的结果输出到 scripts/results/",
+    "results_dir": "results"
+  },
+
+  "global_sampling_overrides": {
+    "_comment": "这里填的参数会覆盖所有档位。想全局关掉某个参数，设为 null。日常保持空对象。",
+    "temperature": null,
+    "min_p": null
+  }
+}
